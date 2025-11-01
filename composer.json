@@ -1,0 +1,19 @@
+{
+    "name": "cb-master/cbm",
+    "description": "Cloud Bill Master Main Repo",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "CBM\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "cb-master",
+            "email": "strblackhawk@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
