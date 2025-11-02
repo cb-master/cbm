@@ -20,4 +20,25 @@ abstract class Factory
 {
     abstract public static function get(): array;
     abstract public static function update(array $data, array $where): int;
+
+    // Status Color And Format Date
+    public static function colorAndDate(array $data, object $model): array
+    {
+        if (empty($data)) {
+            return [];
+        }
+        if (isset($data['status'])) {
+            $status = $model->first(['status' => $data['status']]);
+            $data['status_color'] = $status['color'] ?? '#000000';
+            $data['created'] = apply_filter('date.show', $data['created']);
+            return $data;
+        } else {
+            foreach ($data as $key => $val) {
+                $status = $model->first(['status' => $val['status']]);
+                $data[$key]['status_color'] = $status['color'] ?? '#000000';
+                $data[$key]['created'] = apply_filter('date.show', $val['created']);
+            }
+            return $data;
+        }
+    }
 }

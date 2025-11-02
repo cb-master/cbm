@@ -67,18 +67,26 @@ class ClientFactory extends Factory
             $clients = $model->limit(self::queries());
         }
         // Set Status Color And Format Date
-        $statusModel = new ClientStatusModel();
-        foreach ($clients as $key => $client) {
-            $status = $statusModel->first(['status' => $client['status']]);
-            $clients[$key]['status_color'] = $status['color'] ?? '#000000';
-            $clients[$key]['created'] = apply_filter('date.show', $client['created']);
-        }
-        return $clients;
+        return self::colorAndDate($clients, new ClientStatusModel());
     }
 
     public static function update(array $data, array $where): int
     {
         return 1;
+    }
+
+    public static function single(int|string $id): array
+    {
+        $column = match (true) {
+            is_numeric($id) =>  'cid',
+            filter_var($id, FILTER_VALIDATE_EMAIL) => 'email',
+            str_starts_with($id, 'uuid') => 'cuuid',
+            default =>  'username'
+        };
+
+        $model = new ClientModel;
+        $client = $model->first([$column => $id]);
+        return self::colorAndDate($client, new ClientStatusModel());
     }
 
     public static function count(string $column = null, array $where = [], string $operator = '=', string $compare = 'AND'): int
