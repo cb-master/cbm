@@ -49,7 +49,7 @@ class ClientFactory extends Factory
         $queries = $uri->queries();
         foreach($queries as $key => $val){
             $accepted = self::accesptedQueries();
-            if(array_key_exists($key, $accepted) && Request::input($key)) $exists[$accepted[$key]] = $val;
+            if(array_key_exists($key, $accepted) && Request::instance()->input($key)) $exists[$accepted[$key]] = $val;
         }
         return $exists;
     }
@@ -57,14 +57,14 @@ class ClientFactory extends Factory
     public static function get(): array
     {
         // If Search By Post Request
-        $client = Request::input('client');
+        $search = Request::instance()->input('client');
         $model = new ClientModel;
-        if ($client) {
-            $client .= "%";
-            $where = ['username'=>$client,'email'=>$client,'status'=>$client,'fname'=>$client,'lname'=>$client];
+        if ($search) {
+            $search .= "%";
+            $where = ['username'=>$search,'email'=>$search,'status'=>$search,'fname'=>$search,'lname'=>$search];
             $clients = $model->find($where, 'LIKE');
         } else {
-            $clients = $model->limit(self::queries());
+            $clients = $model->limit(where:self::queries());
         }
         // Set Status Color And Format Date
         return self::colorAndDate($clients, new ClientStatusModel());
